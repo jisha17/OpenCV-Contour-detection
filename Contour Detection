@@ -1,0 +1,68 @@
+import cv2
+import numpy as np
+from datetime import datetime
+
+prefix1='Original Image'
+prefix2='Gray Image'
+prefix3='Blur Image'
+prefix4='Edged Image'
+prefix5='Contoured Image'
+prefix8='Final Image'
+extension='jpg'
+date=datetime.now()
+file_name_format="{:s}-{:%Y%m%d_%H%M%S}.{:s}"
+file_name1=file_name_format.format(prefix1,date,extension)
+file_name2=file_name_format.format(prefix2,date,extension)
+file_name3=file_name_format.format(prefix3,date,extension)
+file_name4=file_name_format.format(prefix4,date,extension)
+file_name5=file_name_format.format(prefix5,date,extension)
+file_name8=file_name_format.format(prefix8,date,extension)
+
+img=cv2.imread('OpenCV mobile3.jpg',cv2.IMREAD_COLOR)
+img1=cv2.resize(img,(1500,800))
+img1copy=img1.copy()
+cv2.imshow("Original Image",img1)
+k=cv2.waitKey(0)
+
+if k==ord('s'):
+    imgray=cv2.cvtColor(img1,cv2.COLOR_BGR2GRAY)
+    blur=cv2.GaussianBlur(imgray,(5,5),0)
+    edged=cv2.Canny(blur,0,50)
+    # find the contours in the edged image, keeping only the largest ones, and initialize the screen contour
+    image,contours,hierarchy=cv2.findContours(edged,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)  
+    #contours1= sorted(contours,key=cv2.contourArea,reverse=True)   #to give you a descending list of contours by area.
+    for c in contours1:                           # loop over the contours
+        perimeter=cv2.arcLength(c,True)          #finds the Contour Perimeter
+        # if our approximated contour has four points, then we can assume that we have found our screen
+        approx=cv2.approxPolyDP(c,0.02*perimeter,True)
+        if len(approx)==4:
+            target=approx
+            break
+   
+   
+    _green=(0,255,0)
+    Finalimg=cv2.drawContours(img1copy,contours,-1,_green,3)     #draw a three pixel wide outline
+    
+    if target is None:
+        print("No edge Found")  
+
+
+            
+    
+    cv2.imshow("Gray Image",imgray)
+    cv2.imshow("Blur Image",blur)
+    cv2.imshow("Edged Image",edged)
+    cv2.imshow("Contoured Image",image)
+    cv2.imshow("Final image",Finalimg)
+    
+    cv2.imwrite('C:/Users/jisha/Captured Image/{0}'.format(file_name1),img1)
+    cv2.imwrite('C:/Users/jisha/Captured Image/{0}'.format(file_name2),imgray)
+    cv2.imwrite('C:/Users/jisha/Captured Image/{0}'.format(file_name3),blur)
+    cv2.imwrite('C:/Users/jisha/Captured Image/{0}'.format(file_name4),edged)
+    cv2.imwrite('C:/Users/jisha/Captured Image/{0}'.format(file_name5),image)
+    cv2.imwrite('C:/Users/jisha/Captured Image/{0}'.format(file_name8),Finalimg)
+    
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+elif k==27:
+    cv2.destroyAllWindows()
