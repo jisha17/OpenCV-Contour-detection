@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 from datetime import datetime
 
 prefix1='Original Image'
@@ -30,24 +29,18 @@ if k==ord('s'):
     edged=cv2.Canny(blur,0,50)
     # find the contours in the edged image, keeping only the largest ones, and initialize the screen contour
     image,contours,hierarchy=cv2.findContours(edged,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)  
-    #contours1= sorted(contours,key=cv2.contourArea,reverse=True)   #to give you a descending list of contours by area.
-    for c in contours1:                           # loop over the contours
+    for c in contours:                           # loop over the contours
         perimeter=cv2.arcLength(c,True)          #finds the Contour Perimeter
         # if our approximated contour has four points, then we can assume that we have found our screen
         approx=cv2.approxPolyDP(c,0.02*perimeter,True)
         if len(approx)==4:
             target=approx
-            break
-   
-   
+            break 
     _green=(0,255,0)
     Finalimg=cv2.drawContours(img1copy,contours,-1,_green,3)     #draw a three pixel wide outline
     
     if target is None:
-        print("No edge Found")  
-
-
-            
+        print("No edge Found")            
     
     cv2.imshow("Gray Image",imgray)
     cv2.imshow("Blur Image",blur)
